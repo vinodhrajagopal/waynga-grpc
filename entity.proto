@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "waynga.com/grpc/entityservice";
+option go_package = "github.com/vinodhrajagopal/waynga-grpc/entityservice";
 
 //package grpc.entity;
 
