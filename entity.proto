@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option go_package = "waynga.com/grpc/entityservice";
+
+//package grpc.entity;
+
+// Interface exported by the server.
+service EntityService {
+  // Obtains the Record with a given id.
+  rpc GetRecord(Id) returns (Record) {}
+}
+
+// Record represents a db record
+message Record {
+  string id = 1;
+  string name = 2;
+}
+
+message Id {
+    string id = 1;
+}
