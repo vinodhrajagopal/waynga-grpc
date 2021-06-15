@@ -4,18 +4,31 @@ option go_package = "github.com/vinodhrajagopal/waynga-grpc/entityservice";
 
 package entityservice;
 
+import "google/protobuf/any.proto";
+
 // Interface exported by the server.
 service EntityService {
   // Obtains the Record with a given id.
   rpc GetRecord(Id) returns (Record) {}
+
+  // Runs a query and returns an array of Records
+  rpc Query(QueryRequest) returns (QueryResponse) {}
 }
 
 // Record represents a db record
 message Record {
   string id = 1;
-  string name = 2;
+  map<string, google.protobuf.Any> fields = 2;
 }
 
 message Id {
     string id = 1;
+}
+
+message QueryRequest {
+  string stmt = 1;
+}
+
+message QueryResponse {
+  repeated Record records = 1;
 }
