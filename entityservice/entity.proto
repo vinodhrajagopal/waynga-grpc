@@ -54,5 +54,6 @@ message SaveResponse {
 }
 
 message RecordArr {
-  repeated Record records = 1;
+  string entityType = 1;
+  repeated Record records = 2;
 }
