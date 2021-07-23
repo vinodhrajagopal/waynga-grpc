@@ -7,6 +7,9 @@
 
 
 ### Updating proto
+Default Command
+`protoc --proto_path=. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative entityservice/entity.proto`
+
 If you are using "Any" type in proto , then make sure you use the following option for compiling your proto file
 `protoc --proto_path=/usr/local/include --proto_path=. --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative entityservice/entity.proto`
 
