@@ -13,6 +13,12 @@ service EntityService {
 
   // Runs a query and returns an array of Records
   rpc Query(QueryRequest) returns (QueryResponse) {}
+
+  // Inserts an array of Records
+  rpc Insert(RecordArr) returns (SaveResponse) {}
+
+  // Updates an array of Records
+  rpc Update(RecordArr) returns (SaveResponse) {}
 }
 
 // Record represents a db record
@@ -35,5 +41,18 @@ message QueryRequest {
 }
 
 message QueryResponse {
+  repeated Record records = 1;
+}
+
+message RecordSaveStatus {
+  string id = 1;
+  bool status = 2;
+}
+
+message SaveResponse {
+  repeated RecordSaveStatus saveStatuses = 1;
+}
+
+message RecordArr {
   repeated Record records = 1;
 }

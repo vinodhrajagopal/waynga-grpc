@@ -22,6 +22,10 @@ type EntityServiceClient interface {
 	GetRecord(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Record, error)
 	// Runs a query and returns an array of Records
 	Query(ctx context.Context, in *QueryRequest, opts ...grpc.CallOption) (*QueryResponse, error)
+	// Inserts an array of Records
+	Insert(ctx context.Context, in *RecordArr, opts ...grpc.CallOption) (*SaveResponse, error)
+	// Updates an array of Records
+	Update(ctx context.Context, in *RecordArr, opts ...grpc.CallOption) (*SaveResponse, error)
 }
 
 type entityServiceClient struct {
@@ -50,6 +54,24 @@ func (c *entityServiceClient) Query(ctx context.Context, in *QueryRequest, opts 
 	return out, nil
 }
 
+func (c *entityServiceClient) Insert(ctx context.Context, in *RecordArr, opts ...grpc.CallOption) (*SaveResponse, error) {
+	out := new(SaveResponse)
+	err := c.cc.Invoke(ctx, "/entityservice.EntityService/Insert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *entityServiceClient) Update(ctx context.Context, in *RecordArr, opts ...grpc.CallOption) (*SaveResponse, error) {
+	out := new(SaveResponse)
+	err := c.cc.Invoke(ctx, "/entityservice.EntityService/Update", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EntityServiceServer is the server API for EntityService service.
 // All implementations must embed UnimplementedEntityServiceServer
 // for forward compatibility
@@ -58,6 +80,10 @@ type EntityServiceServer interface {
 	GetRecord(context.Context, *Id) (*Record, error)
 	// Runs a query and returns an array of Records
 	Query(context.Context, *QueryRequest) (*QueryResponse, error)
+	// Inserts an array of Records
+	Insert(context.Context, *RecordArr) (*SaveResponse, error)
+	// Updates an array of Records
+	Update(context.Context, *RecordArr) (*SaveResponse, error)
 	mustEmbedUnimplementedEntityServiceServer()
 }
 
@@ -70,6 +96,12 @@ func (UnimplementedEntityServiceServer) GetRecord(context.Context, *Id) (*Record
 }
 func (UnimplementedEntityServiceServer) Query(context.Context, *QueryRequest) (*QueryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Query not implemented")
+}
+func (UnimplementedEntityServiceServer) Insert(context.Context, *RecordArr) (*SaveResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Insert not implemented")
+}
+func (UnimplementedEntityServiceServer) Update(context.Context, *RecordArr) (*SaveResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedEntityServiceServer) mustEmbedUnimplementedEntityServiceServer() {}
 
@@ -120,6 +152,42 @@ func _EntityService_Query_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EntityService_Insert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RecordArr)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EntityServiceServer).Insert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/entityservice.EntityService/Insert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EntityServiceServer).Insert(ctx, req.(*RecordArr))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EntityService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RecordArr)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EntityServiceServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/entityservice.EntityService/Update",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EntityServiceServer).Update(ctx, req.(*RecordArr))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // EntityService_ServiceDesc is the grpc.ServiceDesc for EntityService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +202,14 @@ var EntityService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Query",
 			Handler:    _EntityService_Query_Handler,
+		},
+		{
+			MethodName: "Insert",
+			Handler:    _EntityService_Insert_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _EntityService_Update_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
