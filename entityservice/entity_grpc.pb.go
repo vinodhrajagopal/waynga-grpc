@@ -23,9 +23,9 @@ type EntityServiceClient interface {
 	// Runs a query and returns an array of Records
 	Query(ctx context.Context, in *QueryRequest, opts ...grpc.CallOption) (*QueryResponse, error)
 	// Inserts an array of Records
-	Insert(ctx context.Context, in *RecordArr, opts ...grpc.CallOption) (*SaveResponse, error)
+	Insert(ctx context.Context, in *IRecordArr, opts ...grpc.CallOption) (*SaveResponse, error)
 	// Updates an array of Records
-	Update(ctx context.Context, in *RecordArr, opts ...grpc.CallOption) (*SaveResponse, error)
+	Update(ctx context.Context, in *IRecordArr, opts ...grpc.CallOption) (*SaveResponse, error)
 }
 
 type entityServiceClient struct {
@@ -54,7 +54,7 @@ func (c *entityServiceClient) Query(ctx context.Context, in *QueryRequest, opts 
 	return out, nil
 }
 
-func (c *entityServiceClient) Insert(ctx context.Context, in *RecordArr, opts ...grpc.CallOption) (*SaveResponse, error) {
+func (c *entityServiceClient) Insert(ctx context.Context, in *IRecordArr, opts ...grpc.CallOption) (*SaveResponse, error) {
 	out := new(SaveResponse)
 	err := c.cc.Invoke(ctx, "/entityservice.EntityService/Insert", in, out, opts...)
 	if err != nil {
@@ -63,7 +63,7 @@ func (c *entityServiceClient) Insert(ctx context.Context, in *RecordArr, opts ..
 	return out, nil
 }
 
-func (c *entityServiceClient) Update(ctx context.Context, in *RecordArr, opts ...grpc.CallOption) (*SaveResponse, error) {
+func (c *entityServiceClient) Update(ctx context.Context, in *IRecordArr, opts ...grpc.CallOption) (*SaveResponse, error) {
 	out := new(SaveResponse)
 	err := c.cc.Invoke(ctx, "/entityservice.EntityService/Update", in, out, opts...)
 	if err != nil {
@@ -81,9 +81,9 @@ type EntityServiceServer interface {
 	// Runs a query and returns an array of Records
 	Query(context.Context, *QueryRequest) (*QueryResponse, error)
 	// Inserts an array of Records
-	Insert(context.Context, *RecordArr) (*SaveResponse, error)
+	Insert(context.Context, *IRecordArr) (*SaveResponse, error)
 	// Updates an array of Records
-	Update(context.Context, *RecordArr) (*SaveResponse, error)
+	Update(context.Context, *IRecordArr) (*SaveResponse, error)
 	mustEmbedUnimplementedEntityServiceServer()
 }
 
@@ -97,10 +97,10 @@ func (UnimplementedEntityServiceServer) GetRecord(context.Context, *Id) (*Record
 func (UnimplementedEntityServiceServer) Query(context.Context, *QueryRequest) (*QueryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Query not implemented")
 }
-func (UnimplementedEntityServiceServer) Insert(context.Context, *RecordArr) (*SaveResponse, error) {
+func (UnimplementedEntityServiceServer) Insert(context.Context, *IRecordArr) (*SaveResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Insert not implemented")
 }
-func (UnimplementedEntityServiceServer) Update(context.Context, *RecordArr) (*SaveResponse, error) {
+func (UnimplementedEntityServiceServer) Update(context.Context, *IRecordArr) (*SaveResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedEntityServiceServer) mustEmbedUnimplementedEntityServiceServer() {}
@@ -153,7 +153,7 @@ func _EntityService_Query_Handler(srv interface{}, ctx context.Context, dec func
 }
 
 func _EntityService_Insert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RecordArr)
+	in := new(IRecordArr)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -165,13 +165,13 @@ func _EntityService_Insert_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: "/entityservice.EntityService/Insert",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EntityServiceServer).Insert(ctx, req.(*RecordArr))
+		return srv.(EntityServiceServer).Insert(ctx, req.(*IRecordArr))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _EntityService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RecordArr)
+	in := new(IRecordArr)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -183,7 +183,7 @@ func _EntityService_Update_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: "/entityservice.EntityService/Update",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EntityServiceServer).Update(ctx, req.(*RecordArr))
+		return srv.(EntityServiceServer).Update(ctx, req.(*IRecordArr))
 	}
 	return interceptor(ctx, in, info, handler)
 }

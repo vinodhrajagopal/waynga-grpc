@@ -15,10 +15,10 @@ service EntityService {
   rpc Query(QueryRequest) returns (QueryResponse) {}
 
   // Inserts an array of Records
-  rpc Insert(RecordArr) returns (SaveResponse) {}
+  rpc Insert(IRecordArr) returns (SaveResponse) {}
 
   // Updates an array of Records
-  rpc Update(RecordArr) returns (SaveResponse) {}
+  rpc Update(IRecordArr) returns (SaveResponse) {}
 }
 
 // Record represents a db record
@@ -53,7 +53,12 @@ message SaveResponse {
   repeated RecordSaveStatus saveStatuses = 1;
 }
 
-message RecordArr {
+message IRecordArr {
   string entityType = 1;
   repeated Record records = 2;
+}
+
+message IRecord {
+  string id = 1;
+  map<string,string> fields = 2;
 }
