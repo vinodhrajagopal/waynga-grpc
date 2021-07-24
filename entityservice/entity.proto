@@ -55,7 +55,7 @@ message SaveResponse {
 
 message IRecordArr {
   string entityType = 1;
-  repeated Record records = 2;
+  repeated IRecord records = 2;
 }
 
 message IRecord {
