@@ -11,7 +11,7 @@ service SignupService {
   // Signups an org with the provided details
   rpc OrgSignup(OrgSignupRequest) returns (OrgSignupResponse) {}
 
-  rpc UserSignup(UserSignupRequest) returns (OrgSignupResponse) {}
+  rpc UserSignup(UserSignupRequest) returns (UserSignupResponse) {}
   
 }
 

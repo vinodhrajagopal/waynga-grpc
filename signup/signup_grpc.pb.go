@@ -20,7 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type SignupServiceClient interface {
 	// Signups an org with the provided details
 	OrgSignup(ctx context.Context, in *OrgSignupRequest, opts ...grpc.CallOption) (*OrgSignupResponse, error)
-	UserSignup(ctx context.Context, in *UserSignupRequest, opts ...grpc.CallOption) (*OrgSignupResponse, error)
+	UserSignup(ctx context.Context, in *UserSignupRequest, opts ...grpc.CallOption) (*UserSignupResponse, error)
 }
 
 type signupServiceClient struct {
@@ -40,8 +40,8 @@ func (c *signupServiceClient) OrgSignup(ctx context.Context, in *OrgSignupReques
 	return out, nil
 }
 
-func (c *signupServiceClient) UserSignup(ctx context.Context, in *UserSignupRequest, opts ...grpc.CallOption) (*OrgSignupResponse, error) {
-	out := new(OrgSignupResponse)
+func (c *signupServiceClient) UserSignup(ctx context.Context, in *UserSignupRequest, opts ...grpc.CallOption) (*UserSignupResponse, error) {
+	out := new(UserSignupResponse)
 	err := c.cc.Invoke(ctx, "/signup.SignupService/UserSignup", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -55,7 +55,7 @@ func (c *signupServiceClient) UserSignup(ctx context.Context, in *UserSignupRequ
 type SignupServiceServer interface {
 	// Signups an org with the provided details
 	OrgSignup(context.Context, *OrgSignupRequest) (*OrgSignupResponse, error)
-	UserSignup(context.Context, *UserSignupRequest) (*OrgSignupResponse, error)
+	UserSignup(context.Context, *UserSignupRequest) (*UserSignupResponse, error)
 	mustEmbedUnimplementedSignupServiceServer()
 }
 
@@ -66,7 +66,7 @@ type UnimplementedSignupServiceServer struct {
 func (UnimplementedSignupServiceServer) OrgSignup(context.Context, *OrgSignupRequest) (*OrgSignupResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OrgSignup not implemented")
 }
-func (UnimplementedSignupServiceServer) UserSignup(context.Context, *UserSignupRequest) (*OrgSignupResponse, error) {
+func (UnimplementedSignupServiceServer) UserSignup(context.Context, *UserSignupRequest) (*UserSignupResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserSignup not implemented")
 }
 func (UnimplementedSignupServiceServer) mustEmbedUnimplementedSignupServiceServer() {}
