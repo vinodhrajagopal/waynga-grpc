@@ -10,6 +10,8 @@ import "entityservice/entity.proto";
 service SignupService {
   // Signups an org with the provided details
   rpc OrgSignup(OrgSignupRequest) returns (OrgSignupResponse) {}
+
+  rpc UserSignup(UserSignupRequest) returns (OrgSignupResponse) {}
   
 }
 
@@ -31,4 +33,8 @@ message UserSignupRequest {
 message OrgSignupResponse {
     entityservice.Id orgId = 1;
     entityservice.Id adminId = 2;
+}
+
+message UserSignupResponse {
+    entityservice.Id userId = 1;
 }
