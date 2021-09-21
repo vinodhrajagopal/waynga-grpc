@@ -71,6 +71,5 @@ message IdArr {
 }
 
 message DeleteResponse {
-  string id = 1;
-  bool status = 2;
+  bool status = 1;
 }
