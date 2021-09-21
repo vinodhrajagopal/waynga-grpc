@@ -19,6 +19,9 @@ service EntityService {
 
   // Updates an array of Records
   rpc Update(IRecordArr) returns (SaveResponse) {}
+
+  // Deletes an array of ids
+  rpc Delete(IdArr) returns (DeleteResponse) {} 
 }
 
 // Record represents a db record
@@ -61,4 +64,13 @@ message IRecordArr {
 message IRecord {
   string id = 1;
   map<string,string> fields = 2;
+}
+
+message IdArr {
+  repeated string ids = 1;
+}
+
+message DeleteResponse {
+  string id = 1;
+  bool status = 2;
 }

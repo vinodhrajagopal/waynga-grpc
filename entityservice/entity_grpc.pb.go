@@ -26,6 +26,8 @@ type EntityServiceClient interface {
 	Insert(ctx context.Context, in *IRecordArr, opts ...grpc.CallOption) (*SaveResponse, error)
 	// Updates an array of Records
 	Update(ctx context.Context, in *IRecordArr, opts ...grpc.CallOption) (*SaveResponse, error)
+	// Deletes an array of ids
+	Delete(ctx context.Context, in *IdArr, opts ...grpc.CallOption) (*DeleteResponse, error)
 }
 
 type entityServiceClient struct {
@@ -72,6 +74,15 @@ func (c *entityServiceClient) Update(ctx context.Context, in *IRecordArr, opts .
 	return out, nil
 }
 
+func (c *entityServiceClient) Delete(ctx context.Context, in *IdArr, opts ...grpc.CallOption) (*DeleteResponse, error) {
+	out := new(DeleteResponse)
+	err := c.cc.Invoke(ctx, "/entityservice.EntityService/Delete", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EntityServiceServer is the server API for EntityService service.
 // All implementations must embed UnimplementedEntityServiceServer
 // for forward compatibility
@@ -84,6 +95,8 @@ type EntityServiceServer interface {
 	Insert(context.Context, *IRecordArr) (*SaveResponse, error)
 	// Updates an array of Records
 	Update(context.Context, *IRecordArr) (*SaveResponse, error)
+	// Deletes an array of ids
+	Delete(context.Context, *IdArr) (*DeleteResponse, error)
 	mustEmbedUnimplementedEntityServiceServer()
 }
 
@@ -102,6 +115,9 @@ func (UnimplementedEntityServiceServer) Insert(context.Context, *IRecordArr) (*S
 }
 func (UnimplementedEntityServiceServer) Update(context.Context, *IRecordArr) (*SaveResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedEntityServiceServer) Delete(context.Context, *IdArr) (*DeleteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedEntityServiceServer) mustEmbedUnimplementedEntityServiceServer() {}
 
@@ -188,6 +204,24 @@ func _EntityService_Update_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EntityService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IdArr)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EntityServiceServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/entityservice.EntityService/Delete",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EntityServiceServer).Delete(ctx, req.(*IdArr))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // EntityService_ServiceDesc is the grpc.ServiceDesc for EntityService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -210,6 +244,10 @@ var EntityService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Update",
 			Handler:    _EntityService_Update_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _EntityService_Delete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
