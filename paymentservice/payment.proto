@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option go_package = "github.com/vinodhrajagopal/waynga-grpc/paymentservice";
+
+package paymentservice;
+
+//import "google/protobuf/any.proto";
+
+// Interface exported by the server.
+service PaymentService {
+  // cancels an existing payment
+  rpc CancelPayment(CancelPaymentRequest) returns (CancelPaymentResponse) {} 
+}
+
+message CancelPaymentRequest {
+  string PaymentIntentID = 1;
+}
+
+message CancelPaymentResponse {
+  bool IsCancelled = 1;
+}
