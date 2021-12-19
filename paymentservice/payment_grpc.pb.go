@@ -18,6 +18,12 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PaymentServiceClient interface {
+	// returns all payment methods of the user
+	GetPaymentMethods(ctx context.Context, in *PaymentMethodsRequest, opts ...grpc.CallOption) (*PaymentMethodsResponse, error)
+	// holds the specified amount on the end user's card
+	HoldPayment(ctx context.Context, in *PaymentRequest, opts ...grpc.CallOption) (*PaymentResponse, error)
+	// charges the held payment
+	CapturePayment(ctx context.Context, in *CaptureRequest, opts ...grpc.CallOption) (*PaymentResponse, error)
 	// cancels an existing payment
 	CancelPayment(ctx context.Context, in *CancelPaymentRequest, opts ...grpc.CallOption) (*CancelPaymentResponse, error)
 }
@@ -28,6 +34,33 @@ type paymentServiceClient struct {
 
 func NewPaymentServiceClient(cc grpc.ClientConnInterface) PaymentServiceClient {
 	return &paymentServiceClient{cc}
+}
+
+func (c *paymentServiceClient) GetPaymentMethods(ctx context.Context, in *PaymentMethodsRequest, opts ...grpc.CallOption) (*PaymentMethodsResponse, error) {
+	out := new(PaymentMethodsResponse)
+	err := c.cc.Invoke(ctx, "/paymentservice.PaymentService/GetPaymentMethods", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentServiceClient) HoldPayment(ctx context.Context, in *PaymentRequest, opts ...grpc.CallOption) (*PaymentResponse, error) {
+	out := new(PaymentResponse)
+	err := c.cc.Invoke(ctx, "/paymentservice.PaymentService/HoldPayment", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentServiceClient) CapturePayment(ctx context.Context, in *CaptureRequest, opts ...grpc.CallOption) (*PaymentResponse, error) {
+	out := new(PaymentResponse)
+	err := c.cc.Invoke(ctx, "/paymentservice.PaymentService/CapturePayment", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *paymentServiceClient) CancelPayment(ctx context.Context, in *CancelPaymentRequest, opts ...grpc.CallOption) (*CancelPaymentResponse, error) {
@@ -43,6 +76,12 @@ func (c *paymentServiceClient) CancelPayment(ctx context.Context, in *CancelPaym
 // All implementations must embed UnimplementedPaymentServiceServer
 // for forward compatibility
 type PaymentServiceServer interface {
+	// returns all payment methods of the user
+	GetPaymentMethods(context.Context, *PaymentMethodsRequest) (*PaymentMethodsResponse, error)
+	// holds the specified amount on the end user's card
+	HoldPayment(context.Context, *PaymentRequest) (*PaymentResponse, error)
+	// charges the held payment
+	CapturePayment(context.Context, *CaptureRequest) (*PaymentResponse, error)
 	// cancels an existing payment
 	CancelPayment(context.Context, *CancelPaymentRequest) (*CancelPaymentResponse, error)
 	mustEmbedUnimplementedPaymentServiceServer()
@@ -52,6 +91,15 @@ type PaymentServiceServer interface {
 type UnimplementedPaymentServiceServer struct {
 }
 
+func (UnimplementedPaymentServiceServer) GetPaymentMethods(context.Context, *PaymentMethodsRequest) (*PaymentMethodsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPaymentMethods not implemented")
+}
+func (UnimplementedPaymentServiceServer) HoldPayment(context.Context, *PaymentRequest) (*PaymentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HoldPayment not implemented")
+}
+func (UnimplementedPaymentServiceServer) CapturePayment(context.Context, *CaptureRequest) (*PaymentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CapturePayment not implemented")
+}
 func (UnimplementedPaymentServiceServer) CancelPayment(context.Context, *CancelPaymentRequest) (*CancelPaymentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CancelPayment not implemented")
 }
@@ -66,6 +114,60 @@ type UnsafePaymentServiceServer interface {
 
 func RegisterPaymentServiceServer(s grpc.ServiceRegistrar, srv PaymentServiceServer) {
 	s.RegisterService(&PaymentService_ServiceDesc, srv)
+}
+
+func _PaymentService_GetPaymentMethods_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PaymentMethodsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).GetPaymentMethods(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/paymentservice.PaymentService/GetPaymentMethods",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).GetPaymentMethods(ctx, req.(*PaymentMethodsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentService_HoldPayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PaymentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).HoldPayment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/paymentservice.PaymentService/HoldPayment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).HoldPayment(ctx, req.(*PaymentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentService_CapturePayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CaptureRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).CapturePayment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/paymentservice.PaymentService/CapturePayment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).CapturePayment(ctx, req.(*CaptureRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _PaymentService_CancelPayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -94,10 +196,22 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*PaymentServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "GetPaymentMethods",
+			Handler:    _PaymentService_GetPaymentMethods_Handler,
+		},
+		{
+			MethodName: "HoldPayment",
+			Handler:    _PaymentService_HoldPayment_Handler,
+		},
+		{
+			MethodName: "CapturePayment",
+			Handler:    _PaymentService_CapturePayment_Handler,
+		},
+		{
 			MethodName: "CancelPayment",
 			Handler:    _PaymentService_CancelPayment_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "payment.proto",
+	Metadata: "paymentservice/payment.proto",
 }

@@ -4,18 +4,72 @@ option go_package = "github.com/vinodhrajagopal/waynga-grpc/paymentservice";
 
 package paymentservice;
 
-//import "google/protobuf/any.proto";
+// import "google/protobuf/any.proto";
 
 // Interface exported by the server.
 service PaymentService {
+  // returns all payment methods of the user
+  rpc GetPaymentMethods(PaymentMethodsRequest) returns(PaymentMethodsResponse) {}
+
+  // holds the specified amount on the end user's card
+  rpc HoldPayment(PaymentRequest) returns(PaymentResponse) {}
+
+  // charges the held payment
+  rpc CapturePayment(CaptureRequest) returns(PaymentResponse) {}
+
   // cancels an existing payment
-  rpc CancelPayment(CancelPaymentRequest) returns (CancelPaymentResponse) {} 
+  rpc CancelPayment(CancelPaymentRequest) returns(CancelPaymentResponse) {}
 }
 
 message CancelPaymentRequest {
-  string PaymentIntentID = 1;
+  string paymentIntentID = 1;
 }
 
 message CancelPaymentResponse {
-  bool IsCancelled = 1;
+  string paymentIntentID = 1;
+  bool success = 2;
+}
+
+message PaymentMethodsRequest {
+  string userId = 1;
+}
+
+message PaymentMethodsResponse {
+  repeated PaymentMethodDetails paymentMethodDetails = 1;
+}
+
+message PaymentMethodDetails {
+  string paymentMethodID = 1;
+  BillingDetails billingDetails = 2;
+}
+
+message BillingDetails {
+  string cardNumber = 1;
+  string expiryMonth = 2;
+  string expiryYear = 3;
+  string cvc = 4;
+}
+
+message CaptureRequest {
+  string paymentID = 1;
+  int64 amount = 2;
+  string paymentIntentID = 3;
+  string userID = 4;
+}
+
+message PaymentRequest {
+  int64 amount = 1;
+  string currency = 2;
+  string paymentMethodID = 3;
+  BillingDetails billingDetails = 4;
+  string userID = 5;
+  string customerID = 6;
+}
+
+message PaymentResponse {
+  string paymentID = 1;
+  string paymentIntentID = 2;
+  string paymentMethodID = 3;
+  string customerID = 4;
+  string paymentStatus = 5;
 }
