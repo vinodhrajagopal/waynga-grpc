@@ -64,6 +64,7 @@ message PaymentRequest {
   BillingDetails billingDetails = 4;
   string userID = 5;
   string customerID = 6;
+  string paymentID = 7;
 }
 
 message PaymentResponse {
