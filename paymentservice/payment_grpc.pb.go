@@ -24,6 +24,8 @@ const _ = grpc.SupportPackageIsVersion7
 type PaymentServiceClient interface {
 	// returns all payment methods of the curret session user
 	GetPaymentMethods(ctx context.Context, in *GetPaymentMethodsRequest, opts ...grpc.CallOption) (*PaymentMethodsResponse, error)
+	// Creates a payment method for the current user
+	CreatePaymentMethod(ctx context.Context, in *CreatePaymentMethodRequest, opts ...grpc.CallOption) (*CreatePaymentMethodResponse, error)
 	// Creates an entry in the Payment entity with paymentMethodId
 	CreatePayment(ctx context.Context, in *CreatePaymentRequest, opts ...grpc.CallOption) (*PaymentResponse, error)
 	// makes/charges the payment on the customer card
@@ -43,6 +45,15 @@ func NewPaymentServiceClient(cc grpc.ClientConnInterface) PaymentServiceClient {
 func (c *paymentServiceClient) GetPaymentMethods(ctx context.Context, in *GetPaymentMethodsRequest, opts ...grpc.CallOption) (*PaymentMethodsResponse, error) {
 	out := new(PaymentMethodsResponse)
 	err := c.cc.Invoke(ctx, "/paymentservice.PaymentService/GetPaymentMethods", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentServiceClient) CreatePaymentMethod(ctx context.Context, in *CreatePaymentMethodRequest, opts ...grpc.CallOption) (*CreatePaymentMethodResponse, error) {
+	out := new(CreatePaymentMethodResponse)
+	err := c.cc.Invoke(ctx, "/paymentservice.PaymentService/CreatePaymentMethod", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -82,6 +93,8 @@ func (c *paymentServiceClient) CancelPayment(ctx context.Context, in *CancelPaym
 type PaymentServiceServer interface {
 	// returns all payment methods of the curret session user
 	GetPaymentMethods(context.Context, *GetPaymentMethodsRequest) (*PaymentMethodsResponse, error)
+	// Creates a payment method for the current user
+	CreatePaymentMethod(context.Context, *CreatePaymentMethodRequest) (*CreatePaymentMethodResponse, error)
 	// Creates an entry in the Payment entity with paymentMethodId
 	CreatePayment(context.Context, *CreatePaymentRequest) (*PaymentResponse, error)
 	// makes/charges the payment on the customer card
@@ -97,6 +110,9 @@ type UnimplementedPaymentServiceServer struct {
 
 func (UnimplementedPaymentServiceServer) GetPaymentMethods(context.Context, *GetPaymentMethodsRequest) (*PaymentMethodsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPaymentMethods not implemented")
+}
+func (UnimplementedPaymentServiceServer) CreatePaymentMethod(context.Context, *CreatePaymentMethodRequest) (*CreatePaymentMethodResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreatePaymentMethod not implemented")
 }
 func (UnimplementedPaymentServiceServer) CreatePayment(context.Context, *CreatePaymentRequest) (*PaymentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePayment not implemented")
@@ -134,6 +150,24 @@ func _PaymentService_GetPaymentMethods_Handler(srv interface{}, ctx context.Cont
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PaymentServiceServer).GetPaymentMethods(ctx, req.(*GetPaymentMethodsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentService_CreatePaymentMethod_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePaymentMethodRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).CreatePaymentMethod(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/paymentservice.PaymentService/CreatePaymentMethod",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).CreatePaymentMethod(ctx, req.(*CreatePaymentMethodRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -202,6 +236,10 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPaymentMethods",
 			Handler:    _PaymentService_GetPaymentMethods_Handler,
+		},
+		{
+			MethodName: "CreatePaymentMethod",
+			Handler:    _PaymentService_CreatePaymentMethod_Handler,
 		},
 		{
 			MethodName: "CreatePayment",

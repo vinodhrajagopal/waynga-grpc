@@ -11,6 +11,9 @@ service PaymentService {
   // returns all payment methods of the curret session user
   rpc GetPaymentMethods(GetPaymentMethodsRequest) returns(PaymentMethodsResponse) {}
 
+  // Creates a payment method for the current user
+  rpc CreatePaymentMethod(CreatePaymentMethodRequest) returns(CreatePaymentMethodResponse) {}
+
   // Creates an entry in the Payment entity with paymentMethodId
   rpc CreatePayment(CreatePaymentRequest) returns(PaymentResponse) {}
 
@@ -36,6 +39,10 @@ message BillingDetails {
 message GetPaymentMethodsRequest {
 }
 
+message CreatePaymentMethodRequest {
+  BillingDetails billingDetails = 1;
+}
+
 message CreatePaymentRequest {
   string paymentMethodId = 1;
   BillingDetails billingDetails = 2;
@@ -47,6 +54,10 @@ message MakePaymentRequest {
 
 message CancelPaymentRequest {
   string orderId = 1;
+}
+
+message CreatePaymentMethodResponse {
+  string paymentMethodId = 1;
 }
 
 message PaymentMethodsResponse {
