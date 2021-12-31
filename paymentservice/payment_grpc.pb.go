@@ -26,6 +26,12 @@ type PaymentServiceClient interface {
 	GetPaymentMethods(ctx context.Context, in *GetPaymentMethodsRequest, opts ...grpc.CallOption) (*PaymentMethodsResponse, error)
 	// Creates a payment method for the current user
 	CreatePaymentMethod(ctx context.Context, in *CreatePaymentMethodRequest, opts ...grpc.CallOption) (*CreatePaymentMethodResponse, error)
+	// Updates the payment method of the current user - only expiry month and year can be updated
+	UpatePaymentMethod(ctx context.Context, in *UpdatePaymentMethodRequest, opts ...grpc.CallOption) (*UpdatePaymentMethodResponse, error)
+	// Sets/Updates the default payment method of the current user
+	UpdateDefaultPaymentMethod(ctx context.Context, in *UpdateDefaultPaymentMethodRequest, opts ...grpc.CallOption) (*UpdateDefaultPaymentMethodResponse, error)
+	// Detaches the passed payment method from the current user
+	DetachPaymentMethod(ctx context.Context, in *DetachPaymentMethodRequest, opts ...grpc.CallOption) (*DetachPaymentMethodResponse, error)
 	// Creates an entry in the Payment entity with paymentMethodId
 	CreatePayment(ctx context.Context, in *CreatePaymentRequest, opts ...grpc.CallOption) (*PaymentResponse, error)
 	// makes/charges the payment on the customer card
@@ -54,6 +60,33 @@ func (c *paymentServiceClient) GetPaymentMethods(ctx context.Context, in *GetPay
 func (c *paymentServiceClient) CreatePaymentMethod(ctx context.Context, in *CreatePaymentMethodRequest, opts ...grpc.CallOption) (*CreatePaymentMethodResponse, error) {
 	out := new(CreatePaymentMethodResponse)
 	err := c.cc.Invoke(ctx, "/paymentservice.PaymentService/CreatePaymentMethod", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentServiceClient) UpatePaymentMethod(ctx context.Context, in *UpdatePaymentMethodRequest, opts ...grpc.CallOption) (*UpdatePaymentMethodResponse, error) {
+	out := new(UpdatePaymentMethodResponse)
+	err := c.cc.Invoke(ctx, "/paymentservice.PaymentService/UpatePaymentMethod", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentServiceClient) UpdateDefaultPaymentMethod(ctx context.Context, in *UpdateDefaultPaymentMethodRequest, opts ...grpc.CallOption) (*UpdateDefaultPaymentMethodResponse, error) {
+	out := new(UpdateDefaultPaymentMethodResponse)
+	err := c.cc.Invoke(ctx, "/paymentservice.PaymentService/UpdateDefaultPaymentMethod", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentServiceClient) DetachPaymentMethod(ctx context.Context, in *DetachPaymentMethodRequest, opts ...grpc.CallOption) (*DetachPaymentMethodResponse, error) {
+	out := new(DetachPaymentMethodResponse)
+	err := c.cc.Invoke(ctx, "/paymentservice.PaymentService/DetachPaymentMethod", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -95,6 +128,12 @@ type PaymentServiceServer interface {
 	GetPaymentMethods(context.Context, *GetPaymentMethodsRequest) (*PaymentMethodsResponse, error)
 	// Creates a payment method for the current user
 	CreatePaymentMethod(context.Context, *CreatePaymentMethodRequest) (*CreatePaymentMethodResponse, error)
+	// Updates the payment method of the current user - only expiry month and year can be updated
+	UpatePaymentMethod(context.Context, *UpdatePaymentMethodRequest) (*UpdatePaymentMethodResponse, error)
+	// Sets/Updates the default payment method of the current user
+	UpdateDefaultPaymentMethod(context.Context, *UpdateDefaultPaymentMethodRequest) (*UpdateDefaultPaymentMethodResponse, error)
+	// Detaches the passed payment method from the current user
+	DetachPaymentMethod(context.Context, *DetachPaymentMethodRequest) (*DetachPaymentMethodResponse, error)
 	// Creates an entry in the Payment entity with paymentMethodId
 	CreatePayment(context.Context, *CreatePaymentRequest) (*PaymentResponse, error)
 	// makes/charges the payment on the customer card
@@ -113,6 +152,15 @@ func (UnimplementedPaymentServiceServer) GetPaymentMethods(context.Context, *Get
 }
 func (UnimplementedPaymentServiceServer) CreatePaymentMethod(context.Context, *CreatePaymentMethodRequest) (*CreatePaymentMethodResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePaymentMethod not implemented")
+}
+func (UnimplementedPaymentServiceServer) UpatePaymentMethod(context.Context, *UpdatePaymentMethodRequest) (*UpdatePaymentMethodResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpatePaymentMethod not implemented")
+}
+func (UnimplementedPaymentServiceServer) UpdateDefaultPaymentMethod(context.Context, *UpdateDefaultPaymentMethodRequest) (*UpdateDefaultPaymentMethodResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateDefaultPaymentMethod not implemented")
+}
+func (UnimplementedPaymentServiceServer) DetachPaymentMethod(context.Context, *DetachPaymentMethodRequest) (*DetachPaymentMethodResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DetachPaymentMethod not implemented")
 }
 func (UnimplementedPaymentServiceServer) CreatePayment(context.Context, *CreatePaymentRequest) (*PaymentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePayment not implemented")
@@ -168,6 +216,60 @@ func _PaymentService_CreatePaymentMethod_Handler(srv interface{}, ctx context.Co
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PaymentServiceServer).CreatePaymentMethod(ctx, req.(*CreatePaymentMethodRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentService_UpatePaymentMethod_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePaymentMethodRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).UpatePaymentMethod(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/paymentservice.PaymentService/UpatePaymentMethod",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).UpatePaymentMethod(ctx, req.(*UpdatePaymentMethodRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentService_UpdateDefaultPaymentMethod_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateDefaultPaymentMethodRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).UpdateDefaultPaymentMethod(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/paymentservice.PaymentService/UpdateDefaultPaymentMethod",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).UpdateDefaultPaymentMethod(ctx, req.(*UpdateDefaultPaymentMethodRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentService_DetachPaymentMethod_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DetachPaymentMethodRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).DetachPaymentMethod(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/paymentservice.PaymentService/DetachPaymentMethod",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).DetachPaymentMethod(ctx, req.(*DetachPaymentMethodRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -240,6 +342,18 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreatePaymentMethod",
 			Handler:    _PaymentService_CreatePaymentMethod_Handler,
+		},
+		{
+			MethodName: "UpatePaymentMethod",
+			Handler:    _PaymentService_UpatePaymentMethod_Handler,
+		},
+		{
+			MethodName: "UpdateDefaultPaymentMethod",
+			Handler:    _PaymentService_UpdateDefaultPaymentMethod_Handler,
+		},
+		{
+			MethodName: "DetachPaymentMethod",
+			Handler:    _PaymentService_DetachPaymentMethod_Handler,
 		},
 		{
 			MethodName: "CreatePayment",
