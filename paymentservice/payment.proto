@@ -15,7 +15,7 @@ service PaymentService {
   rpc CreatePaymentMethod(CreatePaymentMethodRequest) returns(CreatePaymentMethodResponse) {}
 
   // Updates the payment method of the current user - only expiry month and year can be updated
-  rpc UpatePaymentMethod(UpdatePaymentMethodRequest) returns(UpdatePaymentMethodResponse) {}
+  rpc UpdatePaymentMethod(UpdatePaymentMethodRequest) returns(UpdatePaymentMethodResponse) {}
 
   // Sets/Updates the default payment method of the current user
   rpc UpdateDefaultPaymentMethod(UpdateDefaultPaymentMethodRequest) returns(UpdateDefaultPaymentMethodResponse) {}
