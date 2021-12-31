@@ -14,6 +14,15 @@ service PaymentService {
   // Creates a payment method for the current user
   rpc CreatePaymentMethod(CreatePaymentMethodRequest) returns(CreatePaymentMethodResponse) {}
 
+  // Updates the payment method of the current user - only expiry month and year can be updated
+  rpc UpatePaymentMethod(UpdatePaymentMethodRequest) returns(UpdatePaymentMethodResponse) {}
+
+  // Sets/Updates the default payment method of the current user
+  rpc UpdateDefaultPaymentMethod(UpdateDefaultPaymentMethodRequest) returns(UpdateDefaultPaymentMethodResponse) {}
+
+  // Detaches the passed payment method from the current user
+  rpc DetachPaymentMethod(DetachPaymentMethodRequest) returns(DetachPaymentMethodResponse) {}
+
   // Creates an entry in the Payment entity with paymentMethodId
   rpc CreatePayment(CreatePaymentRequest) returns(PaymentResponse) {}
 
@@ -27,6 +36,7 @@ service PaymentService {
 message PaymentMethodDetails {
   string paymentMethodId = 1;
   BillingDetails billingDetails = 2;
+  bool isDefault = 3;
 }
 
 message BillingDetails {
@@ -41,11 +51,13 @@ message GetPaymentMethodsRequest {
 
 message CreatePaymentMethodRequest {
   BillingDetails billingDetails = 1;
+  bool isDefault = 2;
 }
 
 message CreatePaymentRequest {
   string paymentMethodId = 1;
   BillingDetails billingDetails = 2;
+  bool isDefault = 3;
 }
 
 message MakePaymentRequest {
@@ -67,4 +79,30 @@ message PaymentMethodsResponse {
 message PaymentResponse {
   string paymentId = 1;
   string status = 2;
+}
+
+message UpdatePaymentMethodRequest {
+  string paymentMethodId = 1;
+  BillingDetails billingDetails = 2;
+  bool isDefault = 3;
+}
+
+message UpdatePaymentMethodResponse {
+  string paymentMethodId = 1;
+}
+
+message UpdateDefaultPaymentMethodRequest {
+  string paymentMethodId = 1;
+}
+
+message UpdateDefaultPaymentMethodResponse {
+  string paymentMethodId = 1;
+}
+
+message DetachPaymentMethodRequest {
+  string paymentMethodId = 1;
+}
+
+message DetachPaymentMethodResponse {
+  string paymentMethodId = 1;
 }
