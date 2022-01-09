@@ -37,6 +37,7 @@ message PaymentMethodDetails {
   string paymentMethodId = 1;
   BillingDetails billingDetails = 2;
   bool isDefault = 3;
+  string name = 4;
 }
 
 message BillingDetails {
@@ -52,12 +53,14 @@ message GetPaymentMethodsRequest {
 message CreatePaymentMethodRequest {
   BillingDetails billingDetails = 1;
   bool isDefault = 2;
+  string name = 3;
 }
 
 message CreatePaymentRequest {
   string paymentMethodId = 1;
   BillingDetails billingDetails = 2;
   bool isDefault = 3;
+  string name = 4;
 }
 
 message MakePaymentRequest {
@@ -85,6 +88,7 @@ message UpdatePaymentMethodRequest {
   string paymentMethodId = 1;
   BillingDetails billingDetails = 2;
   bool isDefault = 3;
+  string name = 4;
 }
 
 message UpdatePaymentMethodResponse {
