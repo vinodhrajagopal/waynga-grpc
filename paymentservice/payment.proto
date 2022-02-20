@@ -78,7 +78,7 @@ message CreateOrgPaymentTxnRequest {
   double paidAmount = 1;
   string paymentMode = 2;
   string type = 3;
-  string orderId = 4;
+  string customerOrderId = 4;
   string comment = 5;
 }
 
