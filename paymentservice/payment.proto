@@ -34,6 +34,9 @@ service PaymentService {
 
   // Creates an entry in the OrgPaymentTxn table and adjusts the OrgPaymentInfo fields accordingly
   rpc CreateOrgPaymentTxn(CreateOrgPaymentTxnRequest) returns(CreateOrgPaymentTxnResponse) {}
+
+  // Creates a payment refund request for an order 
+  rpc CreateOrderRefund(CreateOrderRefundRequest) returns(CreateOrderRefundResponse) {}
 }
 
 message PaymentMethodDetails {
@@ -80,6 +83,17 @@ message CreateOrgPaymentTxnRequest {
   string type = 3;
   string customerOrderId = 4;
   string comment = 5;
+}
+
+message CreateOrderRefundRequest {
+  string orderId = 1;
+  double amount = 2;
+}
+
+message CreateOrderRefundResponse {
+  string refundId = 1;
+  string orderId = 2;
+  double amount = 3;
 }
 
 message CreateOrgPaymentTxnResponse {
