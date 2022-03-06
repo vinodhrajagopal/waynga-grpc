@@ -40,6 +40,8 @@ type PaymentServiceClient interface {
 	CancelPayment(ctx context.Context, in *CancelPaymentRequest, opts ...grpc.CallOption) (*PaymentResponse, error)
 	// Creates an entry in the OrgPaymentTxn table and adjusts the OrgPaymentInfo fields accordingly
 	CreateOrgPaymentTxn(ctx context.Context, in *CreateOrgPaymentTxnRequest, opts ...grpc.CallOption) (*CreateOrgPaymentTxnResponse, error)
+	// Creates a payment refund request for an order
+	CreateOrderRefund(ctx context.Context, in *CreateOrderRefundRequest, opts ...grpc.CallOption) (*CreateOrderRefundResponse, error)
 }
 
 type paymentServiceClient struct {
@@ -131,6 +133,15 @@ func (c *paymentServiceClient) CreateOrgPaymentTxn(ctx context.Context, in *Crea
 	return out, nil
 }
 
+func (c *paymentServiceClient) CreateOrderRefund(ctx context.Context, in *CreateOrderRefundRequest, opts ...grpc.CallOption) (*CreateOrderRefundResponse, error) {
+	out := new(CreateOrderRefundResponse)
+	err := c.cc.Invoke(ctx, "/paymentservice.PaymentService/CreateOrderRefund", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PaymentServiceServer is the server API for PaymentService service.
 // All implementations must embed UnimplementedPaymentServiceServer
 // for forward compatibility
@@ -153,6 +164,8 @@ type PaymentServiceServer interface {
 	CancelPayment(context.Context, *CancelPaymentRequest) (*PaymentResponse, error)
 	// Creates an entry in the OrgPaymentTxn table and adjusts the OrgPaymentInfo fields accordingly
 	CreateOrgPaymentTxn(context.Context, *CreateOrgPaymentTxnRequest) (*CreateOrgPaymentTxnResponse, error)
+	// Creates a payment refund request for an order
+	CreateOrderRefund(context.Context, *CreateOrderRefundRequest) (*CreateOrderRefundResponse, error)
 	mustEmbedUnimplementedPaymentServiceServer()
 }
 
@@ -186,6 +199,9 @@ func (UnimplementedPaymentServiceServer) CancelPayment(context.Context, *CancelP
 }
 func (UnimplementedPaymentServiceServer) CreateOrgPaymentTxn(context.Context, *CreateOrgPaymentTxnRequest) (*CreateOrgPaymentTxnResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrgPaymentTxn not implemented")
+}
+func (UnimplementedPaymentServiceServer) CreateOrderRefund(context.Context, *CreateOrderRefundRequest) (*CreateOrderRefundResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOrderRefund not implemented")
 }
 func (UnimplementedPaymentServiceServer) mustEmbedUnimplementedPaymentServiceServer() {}
 
@@ -362,6 +378,24 @@ func _PaymentService_CreateOrgPaymentTxn_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PaymentService_CreateOrderRefund_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOrderRefundRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).CreateOrderRefund(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/paymentservice.PaymentService/CreateOrderRefund",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).CreateOrderRefund(ctx, req.(*CreateOrderRefundRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PaymentService_ServiceDesc is the grpc.ServiceDesc for PaymentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -404,6 +438,10 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateOrgPaymentTxn",
 			Handler:    _PaymentService_CreateOrgPaymentTxn_Handler,
+		},
+		{
+			MethodName: "CreateOrderRefund",
+			Handler:    _PaymentService_CreateOrderRefund_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
